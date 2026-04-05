@@ -26,9 +26,8 @@ export const createAccount = createAsyncThunk(
 
         try {
             const response = await axiosInstance.post("/users/register", formData);
-            localStorage.setItem("accessToken", response.data.data.accessToken);
-            // toast.success("Registered successfully!!!");
-            return response.data;
+            localStorage.setItem("token", response.data.data.accessToken);
+            return response.data.data.user;
         } catch (error) {
             toast.error(error?.response?.data?.message || "Signup failed");
 
@@ -58,7 +57,7 @@ export const userLogin = createAsyncThunk(
       const response = await axiosInstance.post("/users/login", data);
 
       console.log("LOGIN RESPONSE:", response.data);
-      
+
       localStorage.setItem("token", response.data.data.accessToken);
 
       return response.data.data.user;
