@@ -2,12 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../helpers/axiosInstance";
 import toast from "react-hot-toast";
 
+// Initial state
 const initialState = {
     loading: false,
     status: false,
     userData: null,
 };
 
+//Register user
 export const createAccount = createAsyncThunk(
     "register",
     async (data, { rejectWithValue }) => {
@@ -24,6 +26,9 @@ export const createAccount = createAsyncThunk(
 
         try {
             const response = await axiosInstance.post("/users/register", formData);
+            localStorage.setItem("accessToken", response.data.data.accessToken);
+            localStorage.setItem("refreshToken", response.data.data.refreshToken);
+
             toast.success("Registered successfully!!!");
             return response.data;
         } catch (error) {
@@ -34,9 +39,13 @@ export const createAccount = createAsyncThunk(
     }
 );
 
+//Login user
 export const userLogin = createAsyncThunk("login", async (data, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.post("/users/login", data);
+        localStorage.setItem("accessToken", response.data.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.data.refreshToken);
+        toast.success("Logged in successfully!!!"); 
         return response.data.data.user;
     } catch (error) {
         toast.error(error?.response?.data?.message || "Login failed");
@@ -44,6 +53,7 @@ export const userLogin = createAsyncThunk("login", async (data, { rejectWithValu
     }
 });
 
+//Logout user
 export const userLogout = createAsyncThunk("logout", async (refreshToken, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.post("/users/logout", { refreshToken });
@@ -55,6 +65,7 @@ export const userLogout = createAsyncThunk("logout", async (refreshToken, { reje
     }
 });
 
+// Refresh access token
 export const refreshAccessToken = createAsyncThunk(
     "refreshAccessToken",
     async (data, { rejectWithValue }) => {
@@ -71,6 +82,7 @@ export const refreshAccessToken = createAsyncThunk(
     }
 );
 
+// Change password
 export const changePassword = createAsyncThunk(
     "changePassword",
     async (data) => {
@@ -88,6 +100,7 @@ export const changePassword = createAsyncThunk(
     }
 );
 
+// Get current user details
 export const getCurrentUser = createAsyncThunk(
     "getCurrentUser",
     async (_, { rejectWithValue }) => {
@@ -100,6 +113,7 @@ export const getCurrentUser = createAsyncThunk(
     }
 );
 
+// Update avatar
 export const updateAvatar = createAsyncThunk("updateAvatar", async (avatar, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.patch(
@@ -114,6 +128,7 @@ export const updateAvatar = createAsyncThunk("updateAvatar", async (avatar, { re
     }
 });
 
+// Update cover image
 export const updateCoverImg = createAsyncThunk(
     "updateCoverImg",
     async (coverImage, { rejectWithValue }) => {
@@ -131,6 +146,7 @@ export const updateCoverImg = createAsyncThunk(
     }
 );
 
+// Update user details
 export const updateUserDetails = createAsyncThunk(
     "updateUserDetails",
     async (data) => {
@@ -148,6 +164,7 @@ export const updateUserDetails = createAsyncThunk(
     }
 );
 
+// Auth slice
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -220,7 +237,5 @@ const authSlice = createSlice({
         });
     },
 });
-
-// export const { updateUser } = authSlice.actions;
 
 export default authSlice.reducer;
