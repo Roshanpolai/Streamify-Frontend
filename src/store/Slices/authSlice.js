@@ -51,16 +51,23 @@ export const createAccount = createAsyncThunk(
 //     }
 // });
 
-export const userLogin = createAsyncThunk("login", async (data, { rejectWithValue }) => {
+export const userLogin = createAsyncThunk(
+  "login",
+  async (data, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.post("/users/login", data);
-        localStorage.setItem("token", response.data.data.accessToken);
-        return response.data.data.user;
+      const response = await axiosInstance.post("/users/login", data);
+
+      console.log("LOGIN RESPONSE:", response.data);
+      
+      localStorage.setItem("token", response.data.data.accessToken);
+
+      return response.data.data.user;
     } catch (error) {
-        toast.error(error?.response?.data?.message || "Login failed");
-        return rejectWithValue(error?.response?.data);
+      toast.error(error?.response?.data?.message || "Login failed");
+      return rejectWithValue(error?.response?.data);
     }
-});
+  }
+);
 
 //Logout user
 export const userLogout = createAsyncThunk("logout", async (refreshToken, { rejectWithValue }) => {
