@@ -8,19 +8,21 @@ function Search() {
     const navigate = useNavigate();
 
     const search = (data) => {
-        const query = data?.query;
+        const query = data?.query?.trim();
+
+        if (!query) return;
+
         navigate(`/search/${query}`);
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit(search)}>
-                <Input
-                    placeholder="Search"
-                    {...register("query", { required: true })}
-                />
-            </form>
-        </>
+        <form onSubmit={handleSubmit(search)} className="flex items-center">
+            <Input
+                placeholder="Search"
+                {...register("query", { required: true })}
+            />
+            <button type="submit" className="hidden">Search</button>
+        </form>
     );
 }
 

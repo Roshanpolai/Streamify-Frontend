@@ -5,7 +5,9 @@ import toast from "react-hot-toast";
 const initialState = {
     loading: false,
     channelStats: null,
-    channelVideos: []
+    // channelVideos: []
+    homeVideos: [],
+    searchVideos: [],
 };
 
 export const getChannelStats = createAsyncThunk(

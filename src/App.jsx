@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { AuthLayout, Login, SignUp } from "./components/index";
 import { Toaster } from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getCurrentUser } from "./store/Slices/authSlice";
 import {
     History,
@@ -24,10 +24,14 @@ import { EditPersonalInfo, ChangePassword, Layout } from "./components";
 
 function App() {
     const dispatch = useDispatch();
+    const isLoggedIn = useSelector((state) => state.auth?.status);
 
     useEffect(() => {
+    if (isLoggedIn) {
         dispatch(getCurrentUser());
-    }, [dispatch]);
+    } 
+    }, 
+    [dispatch, isLoggedIn]);
 
     return (
         <>

@@ -8,52 +8,56 @@ const initialState = {
     userData: null,
 };
 
-export const createAccount = createAsyncThunk("register", async (data) => {
-    const formData = new FormData();
-    formData.append("avatar", data.avatar[0]);
-    formData.append("username", data.username);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    formData.append("fullName", data.fullName);
-    if (data.coverImage) {
-        formData.append("coverImage", data.coverImage[0]);
-    }
+export const createAccount = createAsyncThunk(
+    "register",
+    async (data, { rejectWithValue }) => {
+        const formData = new FormData();
+        formData.append("avatar", data.avatar[0]);
+        formData.append("username", data.username);
+        formData.append("email", data.email);
+        formData.append("password", data.password);
+        formData.append("fullName", data.fullName);
 
-    try {
-        const response = await axiosInstance.post("/users/register", formData);
-       // console.log(response.data);
-        toast.success("Registered successfully!!!");
-        return response.data;
-    } catch (error) {
-        toast.error(error?.response?.data?.error);
-        throw error;
-    }
-});
+        if (data.coverImage) {
+            formData.append("coverImage", data.coverImage[0]);
+        }
 
-export const userLogin = createAsyncThunk("login", async (data) => {
+        try {
+            const response = await axiosInstance.post("/users/register", formData);
+            toast.success("Registered successfully!!!");
+            return response.data;
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Signup failed");
+
+            return rejectWithValue(error?.response?.data);
+        }
+    }
+);
+
+export const userLogin = createAsyncThunk("login", async (data, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.post("/users/login", data);
         return response.data.data.user;
     } catch (error) {
-        toast.error(error?.response?.data?.error);
-        throw error;
+        toast.error(error?.response?.data?.message || "Login failed");
+        return rejectWithValue(error?.response?.data);
     }
 });
 
-export const userLogout = createAsyncThunk("logout", async () => {
+export const userLogout = createAsyncThunk("logout", async (refreshToken, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.post("/users/logout");
+        const response = await axiosInstance.post("/users/logout", { refreshToken });
         toast.success(response.data?.message);
         return response.data;
     } catch (error) {
-        toast.error(error?.response?.data?.error);
-        throw error;
+        toast.error(error?.response?.data?.message || "Logout failed");
+        return rejectWithValue(error?.response?.data);
     }
 });
 
 export const refreshAccessToken = createAsyncThunk(
     "refreshAccessToken",
-    async (data) => {
+    async (data, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
                 "/users/refresh-token",
@@ -61,8 +65,8 @@ export const refreshAccessToken = createAsyncThunk(
             );
             return response.data;
         } catch (error) {
-            toast.error(error?.response?.data?.error);
-            throw error;
+            toast.error(error?.response?.data?.message || "Failed to refresh access token");
+            return rejectWithValue(error?.response?.data);
         }
     }
 );
@@ -78,16 +82,11 @@ export const changePassword = createAsyncThunk(
             toast.success(response.data?.message);
             return response.data;
         } catch (error) {
-            toast.error(error?.response?.data?.error);
-            throw error;
+            toast.error(error?.response?.data?.message || "Failed to change password");
+            return rejectWithValue(error?.response?.data);
         }
     }
 );
-
-// export const getCurrentUser = createAsyncThunk("getCurrentUser", async () => {
-//         const response = await axiosInstance.get("/users/current-user");
-//         return response.data.data;
-// });
 
 export const getCurrentUser = createAsyncThunk(
     "getCurrentUser",
@@ -101,7 +100,7 @@ export const getCurrentUser = createAsyncThunk(
     }
 );
 
-export const updateAvatar = createAsyncThunk("updateAvatar", async (avatar) => {
+export const updateAvatar = createAsyncThunk("updateAvatar", async (avatar, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.patch(
             "/users/update-avatar",
@@ -110,14 +109,14 @@ export const updateAvatar = createAsyncThunk("updateAvatar", async (avatar) => {
         toast.success("Updated details successfully!!!");
         return response.data.data;
     } catch (error) {
-        toast.error(error?.response?.data?.error);
-        throw error;
+        toast.error(error?.response?.data?.message || "Failed to update avatar");
+        return rejectWithValue(error?.response?.data);
     }
 });
 
 export const updateCoverImg = createAsyncThunk(
     "updateCoverImg",
-    async (coverImage) => {
+    async (coverImage, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.patch(
                 "/users/update-coverImg",
@@ -126,8 +125,8 @@ export const updateCoverImg = createAsyncThunk(
             toast.success(response.data?.message);
             return response.data.data;
         } catch (error) {
-            toast.error(error?.response?.data?.error);
-            throw error;
+            toast.error(error?.response?.data?.message || "Failed to update cover image");
+            return rejectWithValue(error?.response?.data);
         }
     }
 );
@@ -143,8 +142,8 @@ export const updateUserDetails = createAsyncThunk(
             toast.success("Updated details successfully!!!");
             return response.data;
         } catch (error) {
-            toast.error(error?.response?.data?.error);
-            throw error;
+            toast.error(error?.response?.data?.message || "Failed to update user details");
+            return rejectWithValue(error?.response?.data);
         }
     }
 );
@@ -158,6 +157,9 @@ const authSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(createAccount.fulfilled, (state) => {
+            state.loading = false;
+        });
+        builder.addCase(createAccount.rejected, (state) => {
             state.loading = false;
         });
         builder.addCase(userLogin.pending, (state) => {

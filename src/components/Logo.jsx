@@ -1,18 +1,18 @@
 import React from "react";
-import { IoIosVideocam } from "react-icons/io";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
-function Logo({ size = "30" }) {
+function Logo() {
     return (
-        <>
-            <Link to={'/'} className="flex gap-2 items-center">
-                <IoIosVideocam
-                    size={size}
-                    color="#A855F7"
-                />
-                <span className="font-bold text-white">STREAMIFY</span>
-            </Link>
-        </>
+        <Link to="/" className="flex gap-3 items-center px-3 py-2">
+            
+            <img
+                src={logo}
+                alt="Streamify logo"
+                className="w-40 h-40 object-contain flex-shrink-0"
+            />
+
+        </Link>
     );
 }
 

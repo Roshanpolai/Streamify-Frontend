@@ -55,21 +55,21 @@ function HomePage() {
                     className="text-white mb-20 sm:m-0 max-h-screen w-full grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 overflow-y-scroll"
                     id="scrollable-container"
                 >
-                    {videos?.map((video) => (
-                        <VideoList
-                        key={video._id}
-                        avatar={video.ownerDetails?.avatar}
-                        duration={video.duration}
-                        title={video.title}
-                        thumbnail={video.thumbnail?.url}
-                        createdAt={video.createdAt}
-                        views={video.views}
-                        channelName={video.ownerDetails?.username || "Unknown"}
-                        videoId={video._id}
-                        />
-                    ))}
+                        {videos?.map((video) => (
+                            <VideoList
+                                key={video._id}
+                                avatar={video.ownerDetails?.avatar}
+                                duration={video.duration}
+                                title={video.title}
+                                thumbnail={video.thumbnail?.url}
+                                createdAt={video.createdAt}
+                                views={video.views}
+                                channelName={video.ownerDetails?.username || "Unknown"}
+                                videoId={video._id}
+                            />
+                        ))}
 
-                </div>
+                    </div>
             </InfiniteScroll>
         </Container>
     );

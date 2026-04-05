@@ -35,63 +35,79 @@ function Login() {
     }
 
     return (
-        <>
-            <div className="w-full h-screen text-white p-3 flex justify-center items-start">
-                <div className="flex max-w-5xl flex-col space-y-5 justify-center items-center border border-slate-600 p-3 mt-20">
-                    <div className="flex items-center gap-2 mt-5">
-                        <Logo />
-                    </div>
+        <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-[#0a0a0a] to-[#111] text-white px-4">
 
-                    <form
-                        onSubmit={handleSubmit(submit)}
-                        className="space-y-5 p-2"
-                    >
+            {/* Card */}
+            <div className="w-full max-w-md bg-[#111]/80 backdrop-blur-lg rounded-2xl shadow-xl px-6 py-5 space-y-4">
+
+                {/* Logo (Reduced space) */}
+                <div className="flex justify-center items-center -mb-1">
+                    <Logo />
+                </div>
+
+                {/* Form */}
+                <form
+                    onSubmit={handleSubmit(submit)}
+                    className="space-y-3"
+                >
+
+                    {/* Username */}
+                    <div>
                         <Input
-                            label="Username / email : "
+                            label="Username / Email"
                             type="text"
                             placeholder="example@gmail.com"
+                            className="bg-[#0f0f0f] border border-white/10 rounded-lg px-3 py-2 focus:border-purple-500"
                             {...register("username", {
-                                required: "username is required",
+                                required: "Username is required",
                             })}
                         />
                         {errors.username && (
-                            <span className="text-red-500">
+                            <span className="text-red-500 text-xs">
                                 {errors.username.message}
                             </span>
                         )}
+                    </div>
+
+                    {/* Password */}
+                    <div>
                         <Input
-                            label="Password: "
+                            label="Password"
                             type="password"
-                            placeholder="1kd074fjw0"
+                            placeholder="••••••••"
+                            className="bg-[#0f0f0f] border border-white/10 rounded-lg px-3 py-2 focus:border-purple-500"
                             {...register("password", {
-                                required: "password is required",
+                                required: "Password is required",
                             })}
                         />
                         {errors.password && (
-                            <span>{errors.password.message}</span>
+                            <span className="text-red-500 text-xs">
+                                {errors.password.message}
+                            </span>
                         )}
+                    </div>
 
-                        <Button
-                            type="submit"
-                            bgColor="bg-purple-500"
-                            className="w-full sm:py-3 py-2 hover:bg-purple-700 text-lg"
+                    {/* Button */}
+                    <Button
+                        type="submit"
+                        className="w-full py-2 rounded-lg font-semibold bg-gradient-to-r from-purple-600 to-purple-400 text-black hover:scale-105 transition duration-300 shadow-md"
+                    >
+                        Login
+                    </Button>
+
+                    {/* Signup */}
+                    <p className="text-center text-sm text-gray-400">
+                        Don&apos;t have an account?{" "}
+                        <Link
+                            to={"/signup"}
+                            className="text-purple-400 hover:underline"
                         >
-                            Login
-                        </Button>
-
-                        <p className="text-center text-sm">
-                            Don&apos;t have an account?{" "}
-                            <Link
-                                to={"/signup"}
-                                className="text-purple-600 cursor-pointer hover:opacity-70"
-                            >
-                                SignUp
-                            </Link>
-                        </p>
-                    </form>
-                </div>
+                            Sign Up
+                        </Link>
+                    </p>
+                </form>
             </div>
-        </>
+        </div>
     );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Search, Button, Logo, SearchForSmallScreen } from "../index.js";
-import { Link } from "react-router-dom";
+import { Button, Logo, SearchForSmallScreen } from "../index.js";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
     IoCloseCircleOutline,
     BiLike,
@@ -9,22 +9,34 @@ import {
     SlMenu,
 } from "../icons.js";
 import { useSelector, useDispatch } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
 import { IoMdLogOut } from "react-icons/io";
 import { userLogout } from "../../store/Slices/authSlice.js";
 
 function Navbar() {
     const [toggleMenu, setToggleMenu] = useState(false);
     const [openSearch, setOpenSearch] = useState(false);
+    const [query, setQuery] = useState(""); // 🔥 NEW
+
     const authStatus = useSelector((state) => state.auth.status);
     const username = useSelector((state) => state.auth?.userData?.username);
     const profileImg = useSelector((state) => state.auth.userData?.avatar);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const logout = async () => {
         await dispatch(userLogout());
         navigate("/");
+    };
+
+    // 🔥 SEARCH FUNCTION
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        if (!query.trim()) return;
+
+        navigate(`/search/${query}`);
+        setQuery(""); // optional clear
     };
 
     const sidePanelItems = [
@@ -42,21 +54,39 @@ function Navbar() {
 
     return (
         <>
-            <nav className="w-full bg-[#0E0F0F] flex justify-between items-center p-4 sm:gap-5 gap-2 border-b-2 border-gray-500 sticky top-0 z-50">
-                <div className="flex items-center justify-center gap-2 cursor-pointer">
+            <nav className="w-full h-14 bg-black flex justify-between items-center px-4 border-b border-zinc-800 sticky top-0 z-50">
+
+                {/* LOGO */}
+                <div className="flex items-center gap-2 cursor-pointer">
                     <Logo />
                 </div>
 
-                {/* search for large screens */}
-                <div className="w-full sm:w-1/3 hidden sm:block">
-                    <Search />
+                {/* 🔥 SEARCH BAR (FIXED) */}
+                <div className="hidden sm:flex items-center w-[50%] max-w-xl">
+                    <form onSubmit={handleSearch} className="flex w-full">
+
+                        <input
+                            type="text"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Search"
+                            className="w-full bg-zinc-900 text-white px-4 py-2 rounded-l-full border border-zinc-700 focus:outline-none"
+                        />
+
+                        <button
+                            type="submit"
+                            className="bg-zinc-800 px-4 rounded-r-full border border-zinc-700 hover:bg-zinc-700"
+                        >
+                            <CiSearch size={20} />
+                        </button>
+
+                    </form>
                 </div>
 
-                {/* search for small screens */}
+                {/* SMALL SCREEN SEARCH */}
                 <div className="text-white w-full inline-flex justify-end sm:hidden pr-4">
                     <CiSearch
                         size={30}
-                        fontWeight={"bold"}
                         onClick={() => setOpenSearch((prev) => !prev)}
                     />
                     {openSearch && (
@@ -67,71 +97,69 @@ function Navbar() {
                     )}
                 </div>
 
-                {/* login and signup butons for larger screens */}
+                {/* AUTH SECTION */}
                 {authStatus ? (
-                    <div className="rounded-full sm:block hidden">
+                    <div className="hidden sm:flex items-center gap-4">
                         <img
                             src={profileImg}
-                            alt="profileImg"
-                            className="rounded-full w-10 h-10 object-cover"
+                            alt="profile"
+                            className="w-9 h-9 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-zinc-500"
                         />
                     </div>
                 ) : (
-                    <div className="space-x-2 sm:block hidden">
+                    <div className="space-x-3 sm:flex hidden items-center">
                         <Link to={"/login"}>
-                            <Button className="bg-[#222222] border hover:bg-black border-slate-500 sm:px-4 sm:py-2 p-2">
+                            <Button className="bg-transparent text-white border border-gray-500 hover:bg-gray-800 rounded-full px-5 py-2">
                                 Login
                             </Button>
                         </Link>
+
                         <Link to={"/signup"}>
-                            <Button className="font-semibold border hover:bg-[#222222] border-slate-500 sm:px-4 sm:py-2 ">
+                            <Button className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold rounded-full px-5 py-2 shadow-lg">
                                 Sign up
                             </Button>
                         </Link>
                     </div>
                 )}
 
-                {/* hamburger for smaller screens */}
+                {/* HAMBURGER */}
                 <div className="sm:hidden block">
-                    <div className="text-white ">
-                        <SlMenu
-                            size={24}
-                            onClick={() => setToggleMenu((prev) => !prev)}
-                        />
-                    </div>
+                    <SlMenu
+                        size={24}
+                        className="text-white"
+                        onClick={() => setToggleMenu((prev) => !prev)}
+                    />
                 </div>
 
-                {/* Side bar for smaller screens */}
+                {/* MOBILE SIDEBAR */}
                 {toggleMenu && (
-                    <div className="fixed right-0 top-0 text-white flex flex-col border-l h-screen w-[70%] bg-[#0F0F0F] sm:hidden rounded-lg outline-none">
-                        <div className="w-full border-b h-20 flex items-center mb-2 justify-between px-3">
-                            <div className="flex items-center gap-2">
-                                <Logo />
-                            </div>
+                    <div className="fixed right-0 top-0 text-white flex flex-col h-screen w-[75%] bg-black sm:hidden shadow-2xl">
+
+                        {/* HEADER */}
+                        <div className="w-full border-b h-20 flex items-center justify-between px-3">
+                            <Logo />
                             <IoCloseCircleOutline
                                 size={35}
-                                onClick={() => setToggleMenu((prev) => !prev)}
+                                onClick={() => setToggleMenu(false)}
                             />
                         </div>
 
-                        <div className="flex flex-col justify-between h-full py-5 px-3 j">
+                        {/* CONTENT */}
+                        <div className="flex flex-col justify-between h-full py-5 px-3">
+
                             <div className="flex flex-col gap-5">
                                 {sidePanelItems.map((item) => (
                                     <NavLink
                                         to={item.url}
                                         key={item.title}
-                                        onClick={() =>
-                                            setToggleMenu((prev) => !prev)
-                                        }
+                                        onClick={() => setToggleMenu(false)}
                                         className={({ isActive }) =>
-                                            isActive ? "bg-purple-500" : ""
+                                            isActive ? "bg-zinc-800 rounded-lg" : ""
                                         }
                                     >
-                                        <div className="flex items-center border border-slate-500 gap-5 px-3 py-1 hover:bg-purple-500">
-                                            <div>{item.icon}</div>
-                                            <span className="text-lg">
-                                                {item.title}
-                                            </span>
+                                        <div className="flex items-center gap-4 px-3 py-2 rounded-lg hover:bg-zinc-800 transition">
+                                            {item.icon}
+                                            <span>{item.title}</span>
                                         </div>
                                     </NavLink>
                                 ))}
@@ -140,23 +168,23 @@ function Navbar() {
                             {!authStatus ? (
                                 <div className="flex flex-col space-y-5 mb-3">
                                     <Link to={"/login"}>
-                                        <Button className="w-full bg-[#222222] border hover:bg-white hover:text-black border-slate-500 py-1 px-3">
+                                        <Button className="w-full bg-[#222] border py-1 px-3">
                                             Login
                                         </Button>
                                     </Link>
                                     <Link to={"/signup"}>
-                                        <Button className=" w-full font-semibold border border-slate-500 hover:bg-white hover:text-black py-1 px-3">
+                                        <Button className="w-full border py-1 px-3">
                                             Sign up
                                         </Button>
                                     </Link>
                                 </div>
                             ) : (
                                 <div
-                                    className="flex gap-2 justify-start items-start cursor-pointer py-1 px-2 border border-slate-600"
-                                    onClick={() => logout()}
+                                    className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg hover:bg-zinc-800"
+                                    onClick={logout}
                                 >
                                     <IoMdLogOut size={25} />
-                                    <span className="text-base">Logout</span>
+                                    <span>Logout</span>
                                 </div>
                             )}
                         </div>

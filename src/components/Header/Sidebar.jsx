@@ -81,22 +81,23 @@ function Sidebar() {
     return (
         <>
             <div className="sm:block hidden">
-                <div className="text-white lg:w-56 md:w-44 w-16 sm:p-3 p-2 border-slate-600 border-r h-screen flex flex-col justify-between">
+                <div className="text-white lg:w-56 md:w-44 w-16 sm:p-3 p-2 bg-black border-r border-zinc-800 h-screen flex flex-col justify-between">
                     <div className="flex flex-col gap-4 mt-5">
                         {sidebarTopItems.map((item) => (
                             <NavLink
                                 to={item.url}
                                 key={item.title}
                                 className={({ isActive }) =>
-                                    isActive ? "bg-purple-500" : ""
+                                    `flex items-center gap-4 justify-center sm:justify-start px-3 py-2 rounded-lg cursor-pointer transition
+                                ${isActive
+                                        ? "bg-purple-500 text-white"
+                                        : "text-zinc-400 hover:bg-zinc-800 hover:text-white"}`
                                 }
                             >
-                                <div className="flex items-center gap-2 justify-center sm:justify-start hover:bg-purple-500 cursor-pointer py-1 px-2 border border-slate-600">
-                                    {item.icon}
-                                    <span className="text-base hidden md:block">
-                                        {item.title}
-                                    </span>
-                                </div>
+                                {item.icon}
+                                <span className="text-sm font-medium hidden md:block">
+                                    {item.title}
+                                </span>
                             </NavLink>
                         ))}
                     </div>
@@ -104,18 +105,19 @@ function Sidebar() {
                     <div className="space-y-4 mb-10">
                         {username && (
                             <div
-                                className="flex items-center gap-2 justify-center sm:justify-start hover:bg-purple-500 cursor-pointer py-1 px-2 border border-slate-600"
+                                className="flex items-center gap-4 justify-center sm:justify-start px-3 py-2 rounded-lg cursor-pointer transition hover:bg-zinc-800"
                                 onClick={() => logout()}
                             >
                                 <IoMdLogOut size={25} />
-                                <span className="text-base hidden md:block">
+                                <span className="text-sm font-medium hidden md:block">
                                     Logout
                                 </span>
                             </div>
                         )}
-                        <div className="flex items-center gap-2 justify-center sm:justify-start hover:bg-purple-500 cursor-pointer py-1 px-2 border border-slate-600">
+    
+                         <div className="flex items-center gap-4 justify-center sm:justify-start px-3 py-2 rounded-lg cursor-pointer transition hover:bg-zinc-800">
                             <CiSettings size={25} />
-                            <span className="text-base hidden md:block">
+                            <span className="text-sm font-medium hidden md:block">
                                 Settings
                             </span>
                         </div>
@@ -124,13 +126,13 @@ function Sidebar() {
             </div>
 
             {/* for mobile sidebar is bottom bar*/}
-            <div className="border-t-2 text-white h-16 sm:hidden z-20 p-1 w-full flex justify-around fixed bottom-0 bg-[#0E0F0F]">
+            <div className="border-t-2 text-white h-16 sm:hidden z-20 p-1 w-full flex justify-around fixed bottom-0 bg-black border-zinc-800">
                 {bottomBarItems.map((item) => (
                     <NavLink
                         to={item.url}
                         key={item.title}
                         className={({ isActive }) =>
-                            isActive ? "text-purple-500" : ""
+                            isActive ? "bg-zinc-800 rounded-lg" : ""
                         }
                     >
                         <div className="flex flex-col items-center gap-1 cursor-pointer p-1">
