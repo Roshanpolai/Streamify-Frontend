@@ -27,9 +27,7 @@ export const createAccount = createAsyncThunk(
         try {
             const response = await axiosInstance.post("/users/register", formData);
             localStorage.setItem("accessToken", response.data.data.accessToken);
-            localStorage.setItem("refreshToken", response.data.data.refreshToken);
-
-            toast.success("Registered successfully!!!");
+            // toast.success("Registered successfully!!!");
             return response.data;
         } catch (error) {
             toast.error(error?.response?.data?.message || "Signup failed");
@@ -40,12 +38,23 @@ export const createAccount = createAsyncThunk(
 );
 
 //Login user
+// export const userLogin = createAsyncThunk("login", async (data, { rejectWithValue }) => {
+//     try {
+//         const response = await axiosInstance.post("/users/login", data);
+//         localStorage.setItem("accessToken", response.data.data.accessToken);
+//         localStorage.setItem("refreshToken", response.data.data.refreshToken);
+//         toast.success("Logged in successfully!!!"); 
+//         return response.data.data.user;
+//     } catch (error) {
+//         toast.error(error?.response?.data?.message || "Login failed");
+//         return rejectWithValue(error?.response?.data);
+//     }
+// });
+
 export const userLogin = createAsyncThunk("login", async (data, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.post("/users/login", data);
-        localStorage.setItem("accessToken", response.data.data.accessToken);
-        localStorage.setItem("refreshToken", response.data.data.refreshToken);
-        toast.success("Logged in successfully!!!"); 
+        localStorage.setItem("token", response.data.data.accessToken);
         return response.data.data.user;
     } catch (error) {
         toast.error(error?.response?.data?.message || "Login failed");
